@@ -7,7 +7,6 @@ import os
 import cryptography
 from cryptography.fernet import Fernet
 
-
 # menu to create new password, rotate(change), checkout(get), and delete password
 print("Welcome to Asgard Password Vault!")
 print("Use Asgard to securely store anything with a username/id and password \
@@ -19,6 +18,7 @@ print("(C)hange Password         (D)elete Password")
 print("(Q)uit Program\n")
 
 selection = ["S", "s", "C", "c", "Q", "q", "G", "g", "D", "d"]
+password_file = "keys.txt"
 
 def get_user_input(prompt):
     while True:
@@ -31,18 +31,39 @@ def get_user_input(prompt):
         except ValueError as e:
             print(f"Error: {e}")
 
-value = get_user_input("Please enter a selection: ")
-print("Value:", value)
-
+# need to check if encryption key already exists
 def open_file_write(password):
     try:
-        with open("keys.txt", "w") as file:
+        with open(password_file, "w") as file:
             file.write(password)
-            return "Password sucessful stored"
+            print("Password:", password)                                #debug
+            print("Password sucessful stored")
     except FileExistsError:
             print('File already exists')
+
+def generate_key():
+    #Generates a new encryption key and saves it to a file
+    key = Fernet.generate_key()
+    with open("keyfile.key", "wb") as keyfile:
+          keyfile.write(key)
+    return key
+
+# Write encryption code
+def encrypt_file(password_file, key):
+    print("Filename:", password_file, "key:", key)
+    f = Fernet(key)
+    with open(password_file, "rb") as file:
+         file_data = file.read()
+    encrypted_data = f.encrypt(file_data)
+    with open(password_file, "wb") as file:
+         file.write(encrypted_data)
+         print("File encrypted")
+
 # passwords get hashed and salted (not encrypted) for authentication
 # file storing the password gets encypted
+
+value = get_user_input("Please enter a selection: ")
+print("Value:", value)
 
 if value == "Q" or value == "q":
      print("test")
@@ -50,18 +71,20 @@ if value == "Q" or value == "q":
 
 if value == "S" or value == "s":
     password = input("Please enter a password (5 or more characters): ")
-    result = open_file_write(password)
-    print(result)
+    open_file_write(password)
     
-    print(password)
+    print(password)                                                      #Debug
 
-def generate_key():
-     #Generates a new encryption key and saves it to a file
-     key = Fernet.generate_key()
-     with open("keyfile.key", "wb") as keyfile:
-          keyfile.write(key)
+if value == "G" or value == "g":
+    password = decrypt_file(password_file, key)
 
-# Write encryption code
-def encrypt_file(filename, key):
+key = generate_key()
 
-generate_key()
+encrypt_file(password_file, key)
+
+# under development
+def decrypt_file(password_file, key):
+    f = Fernet(key)
+    with open(password_file, "rb") as file:
+        file_data = file.read()
+    decrypt_file = f.decrypt(file_data)
