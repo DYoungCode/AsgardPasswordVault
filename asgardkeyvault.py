@@ -34,7 +34,7 @@ def get_user_input(prompt):
         except ValueError as e:
             print(f"Error: {e}")
 
-# need to check if encryption key already exists
+# need to check if encryption key exists
 def open_file_write(password):
     try:
        with open(password_file, "wb") as file:
