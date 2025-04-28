@@ -19,6 +19,7 @@ print("(Q)uit Program\n")
 
 selection = ["S", "s", "C", "c", "Q", "q", "G", "g", "D", "d"]
 password_file = "keys.txt"
+key_file = "keyfile.key"
 
 def get_user_input(prompt):
     while True:
@@ -34,23 +35,25 @@ def get_user_input(prompt):
 # need to check if encryption key already exists
 def open_file_write(password):
     try:
-        with open(password_file, "w") as file:
-            file.write(password)
-            print("Password:", password)                                #debug
+       with open(password_file, "wb") as file:
+            file.write(password.encode())
+#            print("Password:", password)                                # debug
             print("Password sucessful stored")
     except FileExistsError:
             print('File already exists')
 
+#Generates a new encryption key and saves it to a file
 def generate_key():
-    #Generates a new encryption key and saves it to a file
+    
     key = Fernet.generate_key()
-    with open("keyfile.key", "wb") as keyfile:
+    with open(key_file, "wb") as keyfile:
           keyfile.write(key)
     return key
 
-# Write encryption code
+#Creates an encryption object(f), reads data of file containing password,
+#encrypts the data, and writes it back out to file
 def encrypt_file(password_file, key):
-    print("Filename:", password_file, "key:", key)
+#    print("Filename:", password_file, "key:", key)
     f = Fernet(key)
     with open(password_file, "rb") as file:
          file_data = file.read()
@@ -59,9 +62,27 @@ def encrypt_file(password_file, key):
          file.write(encrypted_data)
          print("File encrypted")
 
-# passwords get hashed and salted (not encrypted) for authentication
-# file storing the password gets encypted
+# decrypts key
+def decrypt_file(password_file, key):
 
+    f = Fernet(key)
+    
+    with open(password_file, "rb") as file:
+        encrypted_data = file.read()
+    
+    try:
+        decrypted_data = f.decrypt(encrypted_data)
+        plaintext_password = decrypted_data.decode('utf-8')  # or 'latin-1'
+        print("File successfully decrypted")
+        return plaintext_password
+    except Exception as e:
+        print(f"Decryption failure: {e}")
+        print("Verify you're using the correct key")
+
+def get_key():
+    key = open(key_file, "rb").read()
+    return key
+    
 value = get_user_input("Please enter a selection: ")
 print("Value:", value)
 
@@ -72,19 +93,22 @@ if value == "Q" or value == "q":
 if value == "S" or value == "s":
     password = input("Please enter a password (5 or more characters): ")
     open_file_write(password)
-    
-    print(password)                                                      #Debug
+    if os.path.exists(key_file):
+        print("Encryption Key already exists!")
+        key = get_key()
+    else:
+        key = generate_key()
+    encrypt_file(password_file, key)
+    print(password)                                                      # debug
 
 if value == "G" or value == "g":
-    password = decrypt_file(password_file, key)
+    if os.path.exists(password_file):
+        key = get_key()
+        password = decrypt_file(password_file, key)
+        print(password)
+    else:
+        print("*** There are no passwords to decrypt ***\n")
+        sys.exit(0)   #consider returning user to main menu
 
-key = generate_key()
-
-encrypt_file(password_file, key)
-
-# under development
-def decrypt_file(password_file, key):
-    f = Fernet(key)
-    with open(password_file, "rb") as file:
-        file_data = file.read()
-    decrypt_file = f.decrypt(file_data)
+# passwords get hashed and salted (not encrypted) for authentication
+# file storing the password gets encypted
