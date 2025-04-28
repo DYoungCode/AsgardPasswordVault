@@ -1,4 +1,4 @@
-The original intention of AsgardPassworVault was to create a password vault that could create, retrieve, rotate, and delete the password.  The primary benefit was working with the Python cryptography library to learn how to encrypt and decrypt data.  While I was successful in implementing the cryptography library, I felt the overall design was missing several peices of functionality.  Rather than try to band-aid the fixes in, I plan to write a version 2 that includes:
+The original intention of AsgardPasswordVault was to create a password vault that could create, retrieve, rotate, and delete the password.  The primary benefit was working with the Python cryptography library to learn how to encrypt and decrypt data.  While I was successful in implementing the cryptography library, I felt the overall design was missing several peices of functionality.  Rather than try to band-aid the fixes in, I plan to write a version 2 that includes:
 
 - adding the ability to store the username, not just the password
 - adding support for multiple usernames and passwords
