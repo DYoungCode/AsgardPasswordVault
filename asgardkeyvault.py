@@ -75,10 +75,10 @@ def decrypt_file(password_file, key):
     try:
         decrypted_data = f.decrypt(encrypted_data)
         plaintext_password = decrypted_data.decode('utf-8')  # or 'latin-1'
-        print("File successfully decrypted")
+        print("\nFile successfully decrypted")
         return plaintext_password
     except Exception as e:
-        print(f"Decryption failure: {e}")
+        print(f"\nDecryption failure: {e}")
         print("Verify you're using the correct key")
 
 def get_key():
@@ -100,7 +100,7 @@ if value == "S" or value == "s":
     else:
         key = generate_key()
     encrypt_file(password_file, key)
-    print(password)                                                      # debug
+    #print(password)                                                      # debug
 
 if value == "G" or value == "g":
     if os.path.exists(password_file):
