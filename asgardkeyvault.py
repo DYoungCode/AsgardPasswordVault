@@ -1,3 +1,5 @@
+# Note: This is a coding project and isn't ready for use in real world systems!
+
 # Asgard Password Vault is a password manager where you can safely
 # store, rotate, checkout, and delete your password. Asgard
 # Key Vault uses <hashing> and <encyrption> algorithms
@@ -18,7 +20,7 @@ print("(C)hange Password         (D)elete Password")
 print("(Q)uit Program\n")
 
 selection = ["S", "s", "C", "c", "Q", "q", "G", "g", "D", "d"]
-password_file = "keys.txt"
+password_file = "passwords.txt"
 key_file = "keyfile.key"
 
 def get_user_input(prompt):
@@ -84,10 +86,9 @@ def get_key():
     return key
     
 value = get_user_input("Please enter a selection: ")
-print("Value:", value)
+
 
 if value == "Q" or value == "q":
-     print("test")
      sys.exit()
 
 if value == "S" or value == "s":
